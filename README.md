@@ -60,6 +60,29 @@ No seu volume persistente `/opt/data/`:
 
 ---
 
+## 💾 Persistência de Dados e Caminhos no Portainer
+
+Como o Hermes Agent roda containerizado, qualquer arquivo criado fora dos caminhos mapeados no seu volume persistente (`/opt/data`) **será perdido permanentemente** toda vez que o container for atualizado, reiniciado ou recriado.
+
+### 📍 Caminhos Persistentes (SEMPRE SALVE AQUI):
+* **Configurações e Chaves:** `HERMES_HOME=/opt/data/.hermes`
+* **Área de Trabalho:** `WORKSPACE=/opt/data/workspace`
+* **Scripts e Automações:** `/opt/data/scripts`
+* **Projetos de Código:** `/opt/data/projects`
+* **Arquivos e Bancos:** `/opt/data/files`
+
+### ⚠️ Caminhos Voláteis/Efêmeros (NÃO SALVE NADA IMPORTANTE AQUI):
+* `/tmp`, `/root`, `/home/hermes`, `/opt/hermes` ou `/usr/local/bin` são reiniciados para o estado original da imagem Docker a cada redeploy do Portainer. Se precisar criar novos scripts, plugins ou arquivos de trabalho, salve sempre sob `/opt/data`.
+
+### 🔑 Variáveis de Ambiente no Docker:
+No Portainer, as variáveis de ambiente devem ser definidas diretamente na interface gráfica da Stack (Stack Env) para estarem disponíveis no ambiente do processo/container. Elas não precisam obrigatoriamente estar em um arquivo `.env` local.
+* Para verificar se uma variável foi carregada corretamente pelo sistema, use o console do container e digite:
+  ```bash
+  printenv | grep NOME_DA_VARIAVEL
+  ```
+
+---
+
 ## 🔒 Passo Extra: Acesso Web com SSL Automático via Caddy
 
 Se você quer acessar o Web Dashboard e o console interativo do Hermes com HTTPS (`https://seu-dominio.com`), nós incluímos o arquivo `Caddyfile.example`.
