@@ -11,6 +11,7 @@ Esse modo permite que seu agente desempenhe duas funções ao mesmo tempo:
 
 ## 📂 O que está incluído neste repositório:
 * 🐋 **`docker-compose.yml`**: Arquivo otimizado para implantação rápida como Stack no Portainer.
+* ⚡ **`setup.sh`**: Script de configuração de 1 clique que baixa todas as regras, chaves, persona e aplica o patch.
 * 🐍 **`patch_whatsapp.py`**: Script de automação universal que reconfigura a ponte do WhatsApp (filtro de assinaturas inteligente e novos comandos).
 * ⚙️ **`config.yaml.example`**: Configuração pré-otimizada para alta performance, ativação de memória persistente e prevenção de spam em grupos de WhatsApp.
 * 🔑 **`.env.example`**: Modelo organizado de variáveis de ambiente e chaves de API necessárias.
@@ -28,35 +29,38 @@ Esse modo permite que seu agente desempenhe duas funções ao mesmo tempo:
 2. Vá em **Stacks** -> **Add stack**.
 3. Dê um nome à stack (ex: `hermes-agent`).
 4. No campo **Web editor**, cole o conteúdo do arquivo `docker-compose.yml` deste repositório.
-5. Em **Env** ou diretamente no editor, garanta que as variáveis do `.env` estejam configuradas.
-6. Clique em **Deploy the stack** no final da página.
+5. Clique em **Deploy the stack** no final da página.
 
 ---
 
-### Passo 2: Configurar o `config.yaml` e `.env`
+### Passo 2: Configuração e Instalação de 1 Clique ⚡
 
-Na pasta do volume persistente do seu servidor (ex: `/opt/data/`):
-1. Crie uma subpasta `.hermes` se não existir.
-2. Copie o arquivo `config.yaml.example` deste repositório para `/opt/data/.hermes/config.yaml`.
-3. Renomeie o arquivo `.env.example` para `.env` e salve-o em `/opt/data/.hermes/.env` preenchendo suas chaves de API (ex: `OPENROUTER_API_KEY`).
+Uma vez que o container esteja rodando no Portainer, você não precisa configurar nada manualmente! 
 
----
-
-### Passo 3: Executar o Patch Automatizado
-
-Abra o terminal do seu servidor (SSH) ou vá no console do container pelo Portainer e execute este comando para aplicar as correções e adicionar os novos recursos:
+1. Clique na stack do `hermes-agent` no Portainer.
+2. Vá em **Containers** e clique no ícone de **Console** (`>_`) do container `hermes-agent`.
+3. Clique em **Connect** para abrir o terminal integrado.
+4. Cole o comando abaixo e aperte Enter:
 
 ```bash
-docker exec -it hermes-agent python3 -c "$(curl -sSL https://raw.githubusercontent.com/empreendedorserial/hermes-whatsapp-mixed/main/patch_whatsapp.py)"
+curl -sSL https://raw.githubusercontent.com/empreendedorserial/hermes-whatsapp-mixed/main/setup.sh | bash
 ```
+
+**O que este comando faz automaticamente por você:**
+* Baixa e configura o arquivo de persona adaptativa (`SOUL.md`).
+* Cria o modelo de regras de suporte (`support_rules.md`).
+* Configura as otimizações corretas no seu `config.yaml`.
+* Cria o modelo de arquivo de chaves de API (`.env`).
+* Executa o patch corretivo e de novos recursos para o WhatsApp (`patch_whatsapp.py`).
 
 ---
 
-### Passo 4: Criar a Persona (`SOUL.md`) e Base de Conhecimento (`support_rules.md`)
+### Passo 3: Colocar suas Chaves de API e Regras de Suporte
 
-No seu volume persistente `/opt/data/`:
-1. Copie o arquivo `SOUL.md` para `/opt/data/SOUL.md` (o Hermes lê a sua personalidade a partir daqui).
-2. Copie o arquivo `support_rules.md` para `/opt/data/support_rules.md` e preencha as regras do seu negócio, FAQ, links e preços.
+Acesse os arquivos diretamente na pasta de volume persistente do seu servidor (ex: `/opt/data/`) ou através de um editor de arquivos:
+
+1. **Chaves de API:** Abra o arquivo `/opt/data/.hermes/.env` e insira sua chave (como `OPENROUTER_API_KEY`).
+2. **Suporte e Vendas:** Abra o arquivo `/opt/data/support_rules.md` e preencha com as regras do seu negócio, preços e links de checkout.
 
 ---
 
@@ -70,16 +74,6 @@ Como o Hermes Agent roda containerizado, qualquer arquivo criado fora dos caminh
 * **Scripts e Automações:** `/opt/data/scripts`
 * **Projetos de Código:** `/opt/data/projects`
 * **Arquivos e Bancos:** `/opt/data/files`
-
-### ⚠️ Caminhos Voláteis/Efêmeros (NÃO SALVE NADA IMPORTANTE AQUI):
-* `/tmp`, `/root`, `/home/hermes`, `/opt/hermes` ou `/usr/local/bin` são reiniciados para o estado original da imagem Docker a cada redeploy do Portainer. Se precisar criar novos scripts, plugins ou arquivos de trabalho, salve sempre sob `/opt/data`.
-
-### 🔑 Variáveis de Ambiente no Docker:
-No Portainer, as variáveis de ambiente devem ser definidas diretamente na interface gráfica da Stack (Stack Env) para estarem disponíveis no ambiente do processo/container. Elas não precisam obrigatoriamente estar em um arquivo `.env` local.
-* Para verificar se uma variável foi carregada corretamente pelo sistema, use o console do container e digite:
-  ```bash
-  printenv | grep NOME_DA_VARIAVEL
-  ```
 
 ---
 
