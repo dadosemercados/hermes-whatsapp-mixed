@@ -15,10 +15,16 @@ RAW_URL="https://raw.githubusercontent.com/empreendedorserial/hermes-whatsapp-mi
 
 echo "⏳ 1. Baixando arquivos de configuração e personas..."
 
-# Baixa o arquivo de persona (SOUL.md) para a pasta persistente e linka no Hermes
-curl -sSL "$RAW_URL/SOUL.md" -o "/opt/data/SOUL.md"
-cp "/opt/data/SOUL.md" "$BASE_DIR/SOUL.md"
-echo "  ✓ Persona SOUL.md configurada em /opt/data/SOUL.md"
+# Baixa o arquivo de persona (SOUL.md) apenas se ele NÃO existir para proteger customizações do aluno
+if [ ! -f "/opt/data/SOUL.md" ]; then
+    curl -sSL "$RAW_URL/SOUL.md" -o "/opt/data/SOUL.md"
+    cp "/opt/data/SOUL.md" "$BASE_DIR/SOUL.md"
+    echo "  ✓ Persona SOUL.md configurada em /opt/data/SOUL.md"
+else
+    echo "  - SOUL.md já existe em /opt/data, pulando para proteger suas customizações."
+    # Garante que a cópia ativa do Hermes esteja atualizada com a versão persistente do aluno
+    cp "/opt/data/SOUL.md" "$BASE_DIR/SOUL.md"
+fi
 
 # Baixa a base de conhecimento de suporte (support_rules.md) se ela não existir
 if [ ! -f "/opt/data/support_rules.md" ]; then
