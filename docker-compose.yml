@@ -1,15 +1,174 @@
+# ==============================================================================
+# 📋 STACK: HERMES AGENT
+# ==============================================================================
+# Esta stack executa o Hermes Agent com persistência, servidor de API e Dashboard.
+#
+# Para o funcionamento correto da stack, as seguintes variáveis de ambiente
+# devem ser definidas no Portainer ou no arquivo .env:
+#
+# 🌐 CONFIGURAÇÕES DE REDE / HOSTS (Obrigatórias)
+#   - HERMES_API_HOST       : Domínio para a API do Hermes (ex: hermes-api.seu-dominio.com)
+#   - HERMES_DASH_HOST      : Domínio para o Dashboard do Hermes (ex: hermes.seu-dominio.com)
+#
+# 🔑 SEGURANÇA & API (Obrigatória)
+#   - API_SERVER_KEY        : Chave secreta de autenticação para a API do Hermes
+#
+# 🤖 PROVEDORES DE IA (Opcionais, mas pelo menos uma é recomendada para o funcionamento)
+#   - OPENAI_API_KEY        : Chave de API da OpenAI
+#   - ANTHROPIC_API_KEY     : Chave de API da Anthropic (Claude)
+#   - GOOGLE_API_KEY        : Chave de API do Google Gemini
+#   - OPENROUTER_API_KEY    : Chave de API da OpenRouter
+#
+# 💬 INTEGRAÇÃO TELEGRAM (Opcional)
+#   - TELEGRAM_BOT_TOKEN    : Token do bot criado no BotFather
+#   - TELEGRAM_ALLOWED_USERS: IDs do Telegram autorizados a usar (ex: "12345678,98765432")
+#   - GATEWAY_ALLOW_ALL_USERS: Permitir que qualquer usuário interaja (padrão: false)
+#
+# 🟢 INTEGRAÇÃO WHATSAPP (Opcional)
+#   - WHATSAPP_ENABLED      : Habilitar integração com o WhatsApp (padrão: false)
+#   - WHATSAPP_OWNER_NUMBER : Número do proprietário do WhatsApp (ex: "5511999999999")
+#   - WHATSAPP_MODE         : Modo de funcionamento do WhatsApp (padrão: bot)
+#   - WHATSAPP_ALLOWED_USERS: Números/contatos autorizados a usar o bot (padrão: *)
+#
+# 🔑 GOOGLE CLOUD / OAUTH (Opcional)
+#   - GOOGLE_CLIENT_ID      : Client ID do Google Cloud para autenticação/ferramentas
+#   - GOOGLE_CLIENT_SECRET  : Client Secret correspondente
+#
+# ⏱️ OUTRAS CONFIGURAÇÕES (Opcionais, com valores padrão)
+#   - TZ                    : Fuso horário (padrão: America/Sao_Paulo)
+#   - HERMES_API_TIMEOUT    : Timeout para chamadas da API (padrão: 1800)
+#   - HERMES_API_CALL_STALE_TIMEOUT: Timeout de expiração de chamada (padrão: 300)
+#   - API_SERVER_CORS_ORIGINS: Origens CORS permitidas (padrão: *)
+# ==============================================================================
+
 version: "3.8"
 
 services:
-  hermes-agent:
-    image: nousresearch/hermes-agent:latest
-    container_name: hermes-agent
-    restart: unless-stopped
-    tty: true
-    stdin_open: true
-    environment:
-      - TZ=America/Sao_Paulo
+  hermes:
+    image: nousresearch/hermes-agent:v2026.5.7
+    command: gateway run
+
     volumes:
-      - /opt/data:/root/.hermes
-    ports:
-      - "9119:9119"
+      - hermes_agent_hermes_data_v5:/opt/data
+
+    environment:
+      # Persistência
+      - HOME=/opt/data
+      - HERMES_HOME=/opt/data/.hermes
+      - PATH=/opt/hermes/.venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+      - TZ=${TZ:-America/Sao_Paulo}
+      - WORKSPACE=/opt/data/workspace
+      - HERMES_WORKSPACE=/opt/data/workspace
+
+      # Providers
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY:-}
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY:-}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+
+      # Google/OAuth
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID:-}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET:-}
+
+      # Telegram
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN:-}
+      - TELEGRAM_ALLOWED_USERS=${TELEGRAM_ALLOWED_USERS:-}
+
+      # WhatsApp
+      # Deixe false até parear.
+      - WHATSAPP_ENABLED=${WHATSAPP_ENABLED:-false}
+      - WHATSAPP_OWNER_NUMBER=${WHATSAPP_OWNER_NUMBER:-}
+      - WHATSAPP_MODE=${WHATSAPP_MODE:-bot}
+      - WHATSAPP_ALLOWED_USERS=${WHATSAPP_ALLOWED_USERS:-*}
+
+      # Gateway access
+      - GATEWAY_ALLOW_ALL_USERS=${GATEWAY_ALLOW_ALL_USERS:-false}
+
+      # API Server
+      - API_SERVER_ENABLED=true
+      - API_SERVER_HOST=0.0.0.0
+      - API_SERVER_KEY=${API_SERVER_KEY}
+      - API_SERVER_CORS_ORIGINS=${API_SERVER_CORS_ORIGINS:-*}
+
+      # Dashboard
+      - HERMES_DASHBOARD=1
+      - HERMES_DASHBOARD_HOST=0.0.0.0
+      - HERMES_DASHBOARD_PORT=9119
+      - HERMES_DASHBOARD_TUI=1
+
+      # Timeouts
+      - HERMES_API_TIMEOUT=${HERMES_API_TIMEOUT:-1800}
+      - HERMES_API_CALL_STALE_TIMEOUT=${HERMES_API_CALL_STALE_TIMEOUT:-300}
+
+    networks:
+      - traefik_public
+
+    deploy:
+      replicas: 1
+
+      update_config:
+        order: stop-first
+        parallelism: 1
+        delay: 15s
+
+      rollback_config:
+        order: stop-first
+        parallelism: 1
+
+      restart_policy:
+        condition: any
+        delay: 10s
+        max_attempts: 0
+
+      labels:
+        - "traefik.enable=true"
+        - "traefik.docker.network=traefik_public"
+
+        # API
+        - "traefik.http.routers.hermes-api.rule=Host(`${HERMES_API_HOST}`)"
+        - "traefik.http.routers.hermes-api.entrypoints=websecure"
+        - "traefik.http.routers.hermes-api.tls=true"
+        - "traefik.http.routers.hermes-api.tls.certresolver=le"
+        - "traefik.http.routers.hermes-api.service=hermes-api"
+        - "traefik.http.services.hermes-api.loadbalancer.server.port=8642"
+
+        # Dashboard
+        - "traefik.http.routers.hermes-dash.rule=Host(`${HERMES_DASH_HOST}`)"
+        - "traefik.http.routers.hermes-dash.entrypoints=websecure"
+        - "traefik.http.routers.hermes-dash.tls=true"
+        - "traefik.http.routers.hermes-dash.tls.certresolver=le"
+        - "traefik.http.routers.hermes-dash.service=hermes-dash"
+        - "traefik.http.services.hermes-dash.loadbalancer.server.port=9119"
+        - "traefik.http.services.hermes-dash.loadbalancer.responseforwarding.flushinterval=100ms"
+
+        # WebSocket /api/ws
+        - "traefik.http.routers.hermes-ws.rule=Host(`${HERMES_DASH_HOST}`) && PathPrefix(`/api/ws`)"
+        - "traefik.http.routers.hermes-ws.entrypoints=websecure"
+        - "traefik.http.routers.hermes-ws.tls=true"
+        - "traefik.http.routers.hermes-ws.tls.certresolver=le"
+        - "traefik.http.routers.hermes-ws.service=hermes-dash"
+        - "traefik.http.routers.hermes-ws.priority=300"
+
+        # WebSocket /api/events
+        - "traefik.http.routers.hermes-events.rule=Host(`${HERMES_DASH_HOST}`) && PathPrefix(`/api/events`)"
+        - "traefik.http.routers.hermes-events.entrypoints=websecure"
+        - "traefik.http.routers.hermes-events.tls=true"
+        - "traefik.http.routers.hermes-events.tls.certresolver=le"
+        - "traefik.http.routers.hermes-events.service=hermes-dash"
+        - "traefik.http.routers.hermes-events.priority=300"
+
+        # WebSocket /api/pty
+        - "traefik.http.routers.hermes-pty.rule=Host(`${HERMES_DASH_HOST}`) && PathPrefix(`/api/pty`)"
+        - "traefik.http.routers.hermes-pty.entrypoints=websecure"
+        - "traefik.http.routers.hermes-pty.tls=true"
+        - "traefik.http.routers.hermes-pty.tls.certresolver=le"
+        - "traefik.http.routers.hermes-pty.service=hermes-dash"
+        - "traefik.http.routers.hermes-pty.priority=300"
+
+volumes:
+  hermes_agent_hermes_data_v5:
+    external: true
+
+networks:
+  traefik_public:
+    external: true
