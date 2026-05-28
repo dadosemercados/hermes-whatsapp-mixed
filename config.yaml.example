@@ -3,8 +3,9 @@
 
 model:
   # O modelo padrão que o Hermes vai usar para raciocinar e responder
-  default: openrouter/anthropic/claude-3.5-sonnet
-  provider: openrouter
+  # Usando o Gemini 3.5 Flash (Super rápido, eficiente e de excelente custo-benefício!)
+  default: gemini-3.5-flash
+  provider: gemini
   context_length: 8000
 
 agent:
@@ -50,8 +51,8 @@ memory:
 auxiliary:
   # IA auxiliar de baixo custo para tarefas de compressão de contexto e buscas
   compression:
-    provider: openrouter
-    model: openrouter/google/gemini-flash-1.5-8b
+    provider: gemini
+    model: gemini-3.5-flash
   session_search:
-    provider: openrouter
-    model: openrouter/google/gemini-flash-1.5-8b
+    provider: gemini
+    model: gemini-3.5-flash
