@@ -14,8 +14,8 @@ Este arquivo é lido pelo assistente de IA toda vez que ele analisa um e-mail de
 - **Assinatura:** Obrigatório usar a assinatura padrão ao final de todo e-mail:
   ```text
   Abraços,
-  André Alencar
-  suporte@aalencar.com.br
+  USER_NAME USER_SURNAME
+  suporte@USER.com.br
   ```
 
 ### 💬 Diretrizes para WhatsApp e Telegram
@@ -51,15 +51,15 @@ Este arquivo é lido pelo assistente de IA toda vez que ele analisa um e-mail de
 ### 3. Chatcommerce (Loja Virtual para Chatwoot)
 
 - **O que é:** Incorpora funcionalidades de comércio ao Chatwoot para venda de produtos físicos ou digitais por chatbots ou presencialmente.
-- **Site Oficial:** `https://shop.aalencar.com.br/products/chatwoot-commerce-venda-produtos-fisicos-ou-digitais-por-chatbots-de-whatsapp-ou-presencialmente`
+- **Site Oficial:** `https://shop.USER.com.br/products/chatwoot-commerce-venda-produtos-fisicos-ou-digitais-por-chatbots-de-whatsapp-ou-presencialmente`
 
 ### 4. Curso e Comunidade sobre Automações com IA e n8n
 
 - **O que é:** Nosso curso completo ensinando automações com n8n, Dify e inteligência artificial (comunidade inclusa no curso). As automações mais avançadas são disponibilizadas gratuitamente como cortesia apenas para membros da comunidade.
 - **Preço:** R$ 399,00.
-- **Link de Vendas:** `https://aalencar.com.br` (só envie o link se o cliente solicitar)
-- **Portal da Comunidade:** `https://comunidade.aalencar.com.br`
-- **Loja Virtual de E-books e Fluxos:** `https://shop.aalencar.com.br`
+- **Link de Vendas:** `https://USER.com.br` (só envie o link se o cliente solicitar)
+- **Portal da Comunidade:** `https://comunidade.USER.com.br`
+- **Loja Virtual de E-books e Fluxos:** `https://shop.USER.com.br`
 
 ### 5. Projetos e Automações Personalizadas / SaaS
 
@@ -86,8 +86,8 @@ Este arquivo é lido pelo assistente de IA toda vez que ele analisa um e-mail de
 ### 4. Fluxo "não funciona" ou apresenta erro não especificado
 
 - **Diretriz:** Explique de forma amigável que para podermos ajudar precisamos de mais informações (detalhes ou print do erro). Recomende imediatamente o vídeo e o blog da comunidade sobre os problemas mais recorrentes:
-  - Vídeo de Problemas Comuns: `https://comunidade.aalencar.com.br/c/blog/problemas-mais-recorrentes-para-instalar-fluxos-n8n`
-  - Blog da Comunidade: `https://comunidade.aalencar.com.br/c/blog/`
+  - Vídeo de Problemas Comuns: `https://comunidade.USER.com.br/c/blog/problemas-mais-recorrentes-para-instalar-fluxos-n8n`
+  - Blog da Comunidade: `https://comunidade.USER.com.br/c/blog/`
 
 ### 5. Configuração do Mercado Pago (Erro PA_UNAUTHORIZED_RESULT_FROM_POLICIES)
 
@@ -156,8 +156,8 @@ Se o cliente pedir links de tutoriais específicos do canal, envie diretamente:
   1. Explique de forma amigável e acolhedora que recebemos a mensagem, mas que o nosso suporte comercial está atualmente fechado (atendimento de segunda a sexta, das 8h às 18h).
   2. Garanta ao cliente que o e-mail dele foi registrado e que daremos retorno com prioridade total no próximo dia útil.
   3. Indique os canais alternativos abaixo se precisarem de ajuda imediata ou compartilhada:
-     - **Atendimento 24h por Inteligência Artificial:** Direct no nosso Instagram [@empreendedorserialbr](https://instagram.com/empreendedorserialbr).
-     - **Comunidade com Vídeos dos Problemas Recorrentes:** Acesse o nosso portal [comunidade.aalencar.com.br](https://comunidade.aalencar.com.br).
+     - **Atendimento 24h por Inteligência Artificial:** Direct no nosso Instagram [@IG_USER](https://instagram.com/IG_USER).
+     - **Comunidade com Vídeos dos Problemas Recorrentes:** Acesse o nosso portal [comunidade.USER.com.br](https://comunidade.USER.com.br).
      - **Para dúvidas técnicas de código ou bugs:** Comentar diretamente sob o respectivo vídeo do YouTube.
 
 ---
