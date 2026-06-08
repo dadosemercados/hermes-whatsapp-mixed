@@ -2,7 +2,7 @@
 set -e
 
 # Pega o usuário do GitHub via parâmetro. Se não for passado, usa 'empreendedorserial' como padrão.
-GITHUB_USER="${1:-empreendedorserial}"
+GITHUB_USER="${1:-dadosemercados}"
 
 echo "=========================================================="
 echo "🤖 CONFIGURADOR DE MODO MISTO DO EMPREENDEDOR SERIAL 🤖"
